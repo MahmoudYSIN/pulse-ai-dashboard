@@ -10,8 +10,11 @@ import {
   ArrowLeft,
   Shield,
   Zap,
+  LogOut,
+  Lock,
 } from "lucide-react";
 import type { AdminTab, Developer, ArchivedDocument, Recipient } from "./types";
+import { useAuth } from "./components/AuthContext";
 import {
   SEED_DEVELOPERS,
   DEMO_RECIPIENTS,
@@ -31,6 +34,7 @@ const TABS: { id: AdminTab; label: string; icon: React.ReactNode }[] = [
 ];
 
 export default function AdminPage() {
+  const { role, logout, openAdminElevate } = useAuth();
   const [activeTab, setActiveTab] = useState<AdminTab>("overview");
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [archivedDocs, setArchivedDocs] = useState<ArchivedDocument[]>([]);
@@ -98,6 +102,37 @@ export default function AdminPage() {
     totalArchived: archivedDocs.length,
   };
 
+  // If logged in as marketing, prompt for elevation to Admin
+  if (role === "marketing") {
+    return (
+      <main className="relative z-10 min-h-screen p-4 flex items-center justify-center">
+        <div className="glass-panel p-8 max-w-md w-full text-center gleam-border shadow-2xl rounded-2xl">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-lg shadow-amber-500/20">
+            <Lock className="w-7 h-7 text-slate-950" />
+          </div>
+          <h2 className="text-xl font-extrabold text-white">Restricted Admin Area</h2>
+          <p className="text-xs text-white/60 mt-2 mb-6">
+            Your current session has <strong className="text-emerald-400">Marketing Access (1010)</strong>. Developer Tracking & PDF Generator requires <strong className="text-amber-300">Admin PIN (2026)</strong>.
+          </p>
+          <div className="flex gap-3">
+            <a
+              href="/"
+              className="flex-1 py-3 rounded-xl text-xs font-bold bg-white/5 text-white/80 border border-white/10 hover:bg-white/10 transition-all text-center"
+            >
+              Back to Hub
+            </a>
+            <button
+              onClick={openAdminElevate}
+              className="flex-1 py-3 rounded-xl text-xs font-extrabold bg-gradient-to-r from-amber-500 to-orange-500 text-white border border-amber-300/40 shadow-md shadow-amber-500/30 hover:brightness-110 transition-all"
+            >
+              Enter Admin PIN
+            </button>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="relative z-10 min-h-screen p-4 md:p-6 max-w-[1600px] mx-auto w-full">
       {/* Admin Header */}
@@ -133,13 +168,31 @@ export default function AdminPage() {
             </div>
           </div>
 
-          <a
-            href="/"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white/5 text-white/80 border border-white/15 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Marketing Hub
-          </a>
+          <div className="flex items-center gap-3">
+            {/* Active Session Role Badge */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold bg-amber-500/15 border border-amber-400/30 text-amber-300">
+              <span>👑</span>
+              <span>Admin Mode</span>
+            </div>
+
+            <a
+              href="/"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-white/5 text-white/80 border border-white/15 hover:bg-white/10 hover:text-white transition-all"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Marketing Hub
+            </a>
+
+            {/* Lock / Logout Button */}
+            <button
+              onClick={logout}
+              title="Lock & Exit Workspace"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/5 text-white/70 border border-white/10 hover:bg-rose-500/20 hover:text-rose-200 hover:border-rose-400/30 transition-all cursor-pointer group"
+            >
+              <LogOut className="w-3.5 h-3.5 text-white/50 group-hover:text-rose-300 transition-colors" />
+              <span className="hidden sm:inline">Lock</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab Navigation */}

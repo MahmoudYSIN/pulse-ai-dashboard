@@ -1,7 +1,9 @@
 "use client";
+
 import { motion } from "framer-motion";
-import { Zap, MessageSquare, Mail, Activity } from "lucide-react";
+import { Zap, MessageSquare, Mail, Activity, Shield, LogOut, ExternalLink, Lock } from "lucide-react";
 import type { ActiveChannel } from "../types";
+import { useAuth } from "./AuthContext";
 
 interface HeaderProps {
   activeChannel: ActiveChannel;
@@ -9,12 +11,14 @@ interface HeaderProps {
 }
 
 export default function Header({ activeChannel, onChannelChange }: HeaderProps) {
+  const { role, logout, openAdminElevate } = useAuth();
+
   return (
     <motion.header
       initial={{ y: -24, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-      className="glass-panel px-6 py-3.5 flex items-center justify-between sticky top-4 z-50 mx-4 gleam-border shadow-2xl"
+      className="glass-panel px-6 py-3.5 flex items-center justify-between sticky top-4 z-50 mx-4 gleam-border shadow-2xl flex-wrap gap-4"
     >
       {/* Brand & Hub Title */}
       <div className="flex items-center gap-3.5">
@@ -77,24 +81,55 @@ export default function Header({ activeChannel, onChannelChange }: HeaderProps) 
         </button>
       </div>
 
-      {/* Live System Status */}
+      {/* Right Controls: Role Badge, Admin CRM Link, and Lock/Logout */}
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-2.5 glass-panel-sm px-4 py-2 border-white/20">
-          <div className="dot-connected-gold" />
-          <div className="flex flex-col">
-            <span className="text-[10px] text-amber-200/80 uppercase tracking-wider font-extrabold">
-              Automation Engine
-            </span>
-            <span className="text-xs text-white font-bold flex items-center gap-1">
-              n8n: <span className="text-emerald-300 font-extrabold">Connected</span>
-            </span>
-          </div>
+        {/* Admin Navigation link (Only shown for Admin role) */}
+        {role === "admin" && (
+          <a
+            href="/admin"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500/20 text-amber-200 border border-amber-400/40 hover:bg-amber-500/30 hover:text-white transition-all shadow-md shadow-amber-500/10"
+          >
+            <Shield className="w-3.5 h-3.5 text-amber-400" />
+            <span>Admin CRM</span>
+          </a>
+        )}
+
+        {/* If Marketing role, show locked button that triggers elevation */}
+        {role === "marketing" && (
+          <button
+            onClick={openAdminElevate}
+            title="Unlock Admin CRM with Admin PIN (2026)"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-white/5 text-white/50 border border-white/10 hover:bg-white/10 hover:text-white/80 transition-all cursor-pointer"
+          >
+            <Lock className="w-3 h-3 text-amber-400/70" />
+            <span>Admin CRM</span>
+          </button>
+        )}
+
+        {/* Active Session Role Badge */}
+        <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-extrabold border backdrop-blur-md transition-all shadow-sm">
+          {role === "admin" ? (
+            <div className="flex items-center gap-1.5 text-amber-300 bg-amber-500/15 border-amber-400/30 px-2.5 py-1 rounded-lg border">
+              <span>👑</span>
+              <span>Admin Mode</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 text-emerald-300 bg-emerald-500/15 border-emerald-400/30 px-2.5 py-1 rounded-lg border">
+              <span>🟢</span>
+              <span>Marketing Mode</span>
+            </div>
+          )}
         </div>
 
-        <div className="flex items-center gap-1.5 glass-panel-sm px-3 py-2 text-amber-300 border-white/20">
-          <Activity className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
-          <span className="text-[11px] font-extrabold text-white">Live</span>
-        </div>
+        {/* Lock / Logout Button */}
+        <button
+          onClick={logout}
+          title="Lock & Exit Workspace"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-white/5 text-white/70 border border-white/10 hover:bg-rose-500/20 hover:text-rose-200 hover:border-rose-400/30 transition-all cursor-pointer group"
+        >
+          <LogOut className="w-3.5 h-3.5 text-white/50 group-hover:text-rose-300 transition-colors" />
+          <span className="hidden sm:inline">Lock</span>
+        </button>
       </div>
     </motion.header>
   );

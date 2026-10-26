@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import ClientProviders from "./components/ClientProviders";
 
 const inter = Inter({
   variable: "--font-geist-sans",
@@ -30,7 +31,9 @@ export default function RootLayout({
         </div>
 
         <div className="relative z-10 flex-1 flex flex-col">
-          {children}
+          <ClientProviders>
+            {children}
+          </ClientProviders>
         </div>
       </body>
     </html>
