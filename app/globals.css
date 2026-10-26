@@ -1,26 +1,224 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --amber-gold: #f59e0b;
+  --warm-amber: #fbbf24;
+  --honey-gold: #d97706;
+  --soft-coral: #fb923c;
+  --warm-beige: #fef3c7;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 158, 11, 0.4) transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.6);
+}
+
+/* 1. Root Ambient Glow & Background */
+html,
+body,
+#__next,
+main,
+.min-h-screen {
+  background: linear-gradient(135deg, #1c1512 0%, #2e2219 40%, #171310 100%) !important;
+  color: #ffffff !important;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Fixed vibrant warm light orbs that shine from behind the panels */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.45) 0%, transparent 45%),
+    radial-gradient(circle at 75% 35%, rgba(217, 119, 6, 0.35) 0%, transparent 50%),
+    radial-gradient(circle at 30% 85%, rgba(251, 191, 36, 0.25) 0%, transparent 45%);
+  will-change: transform;
+}
+
+/* 2. Glass Panel Refraction Overwrite */
+.glass-panel,
+.glass-panel-sm {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(36px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(36px) saturate(210%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+  border-radius: 1.25rem !important;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-bubble {
+  background: rgba(255, 255, 255, 0.09) !important;
+  backdrop-filter: blur(40px) saturate(210%) !important;
+  -webkit-backdrop-filter: blur(40px) saturate(210%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.24) !important;
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4), 0 0 50px rgba(245, 158, 11, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.3) !important;
+  border-radius: 1.25rem !important;
+  position: relative;
+}
+
+/* 3. Input Fields, Textareas & Tables */
+.glass-input {
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 0.75rem !important;
+  color: #ffffff !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.glass-input:focus {
+  outline: none !important;
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: rgba(245, 158, 11, 0.75) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.25), 0 0 35px rgba(245, 158, 11, 0.2) !important;
+}
+
+.glass-input::placeholder {
+  color: rgba(241, 245, 249, 0.6) !important;
+}
+
+/* Light Gleam Border Effect */
+.gleam-border {
+  position: relative;
+}
+.gleam-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(245, 158, 11, 0.45), rgba(255, 255, 255, 0.15));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* Warm Interactive Buttons */
+.warm-btn {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.warm-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.25), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.warm-btn:hover::before {
+  opacity: 1;
+}
+.warm-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25), 0 0 25px rgba(245, 158, 11, 0.3);
+}
+.warm-btn:active {
+  transform: translateY(0);
+}
+
+/* Frosted WhatsApp chat bubbles */
+.whatsapp-bubble-glass {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(5, 150, 105, 0.5)) !important;
+  backdrop-filter: blur(28px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(200%) !important;
+  border: 1px solid rgba(110, 231, 183, 0.35) !important;
+  border-radius: 14px 14px 4px 14px !important;
+  padding: 12px 16px !important;
+  max-width: 86% !important;
+  position: relative !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25), inset 0 1px 1px rgba(255, 255, 255, 0.25) !important;
+}
+
+.whatsapp-bubble-glass-incoming {
+  background: rgba(255, 255, 255, 0.12) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 14px 14px 14px 4px !important;
+  padding: 12px 16px !important;
+  max-width: 86% !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Shimmer Progress */
+.progress-bar-amber {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24, #f97316, #f59e0b);
+  background-size: 300% 100%;
+  animation: amberProgressShimmer 2s ease-in-out infinite;
+}
+
+@keyframes amberProgressShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.dot-connected-gold {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.9), 0 0 20px rgba(245, 158, 11, 0.6);
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.drag-zone-warm {
+  border: 2px dashed rgba(245, 158, 11, 0.45) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  backdrop-filter: blur(24px) !important;
+  transition: all 0.3s ease;
+}
+
+.drag-zone-warm:hover,
+.drag-zone-warm.drag-active {
+  border-color: rgba(245, 158, 11, 0.85) !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+  box-shadow: 0 0 35px rgba(245, 158, 11, 0.2) !important;
+}
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
